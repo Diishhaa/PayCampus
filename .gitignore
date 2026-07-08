@@ -1,0 +1,67 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate.cfg
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The Python Packaging Index
+dist/
+build/
+eggs/
+parts/
+bin/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+__pycache__/
+
+
+# Xcode related
+CMakeCache.txt
+CMakeFiles
+CMakeLists.txt.user
+Makefile
+cmake_install.cmake
+*.xcode
+*.xcodeproj
+*.xcworkspace
+
+# Android related
+.gradle/
+local.properties
+**/AndroidManifest.xml.user
+**/captures/
+*.apk
+*.ap_
+*.dex
+*.class
+
+# Flutter/Dart related
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+
+# Web related
+.node_modules/
+node_modules/
+package-lock.json
+
+# Visual Studio Code related
+.vscode/
