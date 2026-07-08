@@ -30,7 +30,7 @@ class _StudentOnboardingScreenState extends State<StudentOnboardingScreen> {
     if (_nameController.text.isEmpty || _classController.text.isEmpty || _divController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Please fill all student details"),
+          content: Text("Please fill all student details to link the account"),
           backgroundColor: AppColors.error,
         ),
       );
@@ -41,25 +41,34 @@ class _StudentOnboardingScreenState extends State<StudentOnboardingScreen> {
       _isLoading = true;
     });
 
-    // Simulate profile creation with "history" data kept same as the mock students
+    // Simulate profile creation and "Saving Login"
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-      });
 
       final student = Student(
         id: "stud_custom",
         name: _nameController.text,
-        rollNo: "GIS/2026/001", // Mock roll no
+        rollNo: "GIS/2026/001",
         grade: "Grade ${_classController.text}-${_divController.text.toUpperCase()}",
         schoolName: "Greenwood International School",
         avatarUrl: "https://api.dicebear.com/7.x/adventurer/svg?seed=${_nameController.text}",
-        pendingAmount: 14500.0, // Keeping history data same as mock
+        pendingAmount: 14500.0,
         totalAmount: 45000.0,
       );
 
-      // Navigate to Parent Dashboard directly
+      setState(() {
+        _isLoading = false;
+      });
+
+      // Show success and move to dashboard
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Login successful! Profile created."),
+          backgroundColor: AppColors.success,
+          duration: Duration(seconds: 1),
+        ),
+      );
+
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => ParentDashboard(student: student)),
@@ -88,13 +97,30 @@ class _StudentOnboardingScreenState extends State<StudentOnboardingScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  "STEP 2: LINK PROFILE",
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
               Text(
-                "Student Details",
+                "Link Student Details",
                 style: theme.textTheme.displaySmall?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Text(
-                "Link your ward's profile to continue",
+                "Enter your ward's details to sync their fee history from the school records.",
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontSize: 15,
                   color: isDark ? const Color(0xFF94A3B8) : AppColors.textSecondary,
@@ -108,7 +134,7 @@ class _StudentOnboardingScreenState extends State<StudentOnboardingScreen> {
                 controller: _nameController,
                 style: const TextStyle(fontWeight: FontWeight.w600),
                 decoration: const InputDecoration(
-                  hintText: "Enter full name",
+                  hintText: "Enter full name (as per school record)",
                 ),
               ),
               const SizedBox(height: 24),
@@ -120,7 +146,7 @@ class _StudentOnboardingScreenState extends State<StudentOnboardingScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildLabel("CLASS", theme),
+                        _buildLabel("CLASS / GRADE", theme),
                         const SizedBox(height: 8),
                         TextField(
                           controller: _classController,
@@ -162,7 +188,17 @@ class _StudentOnboardingScreenState extends State<StudentOnboardingScreen> {
                   onPressed: _isLoading ? null : _completeOnboarding,
                   child: _isLoading
                     ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                    : const Text("Create Profile & Continue"),
+                    : const Text("Verify & Login to Dashboard"),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: Text(
+                  "Data will be synced with +91 ${widget.phoneNumber}",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark ? const Color(0xFF64748B) : AppColors.textMuted,
+                  ),
                 ),
               ),
             ],

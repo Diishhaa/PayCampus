@@ -155,7 +155,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                       _buildRoleButton(
                         context,
                         title: "Parent Portal",
-                        description: "Pay fees, upload proof, view e-receipts",
+                        description: "Quick Login & Ward Linking",
                         icon: Icons.family_restroom,
                         color: AppColors.primary,
                         onPressed: () {
