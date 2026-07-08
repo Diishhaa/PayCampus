@@ -2,39 +2,39 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Brand Colors
-  static const Color primary = Color(0xFF2563EB);      // Royal Blue
-  static const Color secondary = Color(0xFF0F172A);    // Dark Navy
-  static const Color accent = Color(0xFF22C55E);       // Success Green
+  static const Color primary = Color(0xFF2E41B6);      // Deep Indigo
+  static const Color secondary = Color(0xFF0B1C30);    // Dark Navy / Slate
+  static const Color accent = Color(0xFF3EB489);       // Mint Teal
   
   // Status Colors
-  static const Color success = Color(0xFF22C55E);
+  static const Color success = Color(0xFF3EB489);      // Mint Teal
   static const Color warning = Color(0xFFF59E0B);      // Amber
-  static const Color error = Color(0xFFEF4444);        // Red
-  static const Color info = Color(0xFF3B82F6);         // Light Blue
+  static const Color error = Color(0xFFBA1A1A);        // Fintech Red
+  static const Color info = Color(0xFF7C3AED);         // Subtle Violet
 
   // Neutrals / Backgrounds
-  static const Color background = Color(0xFFF8FAFC);   // Off-white Slate
+  static const Color background = Color(0xFFF8F9FF);   // Soft Off-white Indigo
   static const Color cardBg = Color(0xFFFFFFFF);
-  static const Color textPrimary = Color(0xFF111827);  // Dark Gray
-  static const Color textSecondary = Color(0xFF6B7280);// Muted Slate
-  static const Color textMuted = Color(0xFF9CA3AF);    // Light Slate
+  static const Color textPrimary = Color(0xFF0B1C30);  // Dark Navy Text
+  static const Color textSecondary = Color(0xFF64748B);// Muted Slate Text
+  static const Color textMuted = Color(0xFF757685);    // Light Slate Text
   static const Color border = Color(0xFFE2E8F0);       // Soft Gray Border
   
   // Custom Fintech Gradients
   static const Gradient primaryGradient = LinearGradient(
-    colors: [Color(0xFF2563EB), Color(0xFF1D4ED8)],
+    colors: [Color(0xFF2E41B6), Color(0xFF1D2E9C)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const Gradient darkGradient = LinearGradient(
-    colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
+    colors: [Color(0xFF1E293B), Color(0xFF0B0E14)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const Gradient successGradient = LinearGradient(
-    colors: [Color(0xFF10B981), Color(0xFF059669)],
+    colors: [Color(0xFF3EB489), Color(0xFF2E9E75)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -51,15 +51,15 @@ class AppColors {
   // Soft shadows
   static List<BoxShadow> softShadow = [
     BoxShadow(
-      color: const Color(0xFF0F172A).withOpacity(0.04),
-      blurRadius: 16,
+      color: const Color(0xFF0B1C30).withOpacity(0.04),
+      blurRadius: 20,
       offset: const Offset(0, 8),
     ),
   ];
 
   static List<BoxShadow> cardShadow = [
     BoxShadow(
-      color: const Color(0xFF0F172A).withOpacity(0.06),
+      color: const Color(0xFF0B1C30).withOpacity(0.06),
       blurRadius: 24,
       offset: const Offset(0, 12),
     ),
