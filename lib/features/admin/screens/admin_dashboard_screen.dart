@@ -81,6 +81,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           children: [
             Text(
               "PayCampus Admin",
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
@@ -90,6 +92,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             ),
             Text(
               "Greenwood Billing Desk",
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -135,7 +139,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                           iconBgColor: AppColors.success.withOpacity(0.1),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: KpiCard(
                           title: "OUTSTANDING BALANCE",
@@ -149,7 +153,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   // KPI Grid Row 2
                   Row(
                     children: [
@@ -163,7 +167,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                           iconColor: AppColors.primary,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: KpiCard(
                           title: "PENDING DEFAULTERS",
@@ -197,10 +201,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "Recent Billing Log",
-                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      Expanded(
+                        child: Text(
+                          "Recent Billing Log",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        ),
                       ),
+                      const SizedBox(width: 8),
                       TextButton(
                         onPressed: () {
                           setState(() {
@@ -241,25 +250,32 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "COLLECTION TRENDS (JULY)",
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
-                      color: isDark ? const Color(0xFF64748B) : AppColors.textSecondary,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "COLLECTION TRENDS (JULY)",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                        color: isDark ? const Color(0xFF64748B) : AppColors.textSecondary,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    "₹4.24L total revenue collected",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ],
+                    const SizedBox(height: 4),
+                    const Text(
+                      "₹4.24L total revenue collected",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
@@ -286,11 +302,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           // Graph X-axis Labels
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text("Week 1", style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
-              Text("Week 2", style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
-              Text("Week 3", style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
-              Text("Week 4", style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+            children: [
+              Expanded(child: Text("Week 1", textAlign: TextAlign.start, style: TextStyle(fontSize: 11, color: AppColors.textSecondary))),
+              Expanded(child: Text("Week 2", textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: AppColors.textSecondary))),
+              Expanded(child: Text("Week 3", textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: AppColors.textSecondary))),
+              Expanded(child: Text("Week 4", textAlign: TextAlign.end, style: TextStyle(fontSize: 11, color: AppColors.textSecondary))),
             ],
           ),
         ],
@@ -393,6 +409,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               Text(
                 label,
                 textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -453,10 +471,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             ),
             title: Text(
               act['title'] as String,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
               act['details'] as String,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
             ),
             trailing: Text(

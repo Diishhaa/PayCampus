@@ -13,6 +13,8 @@ class AdminAnalyticsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "Revenue Analytics",
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         automaticallyImplyLeading: false,
@@ -209,9 +211,9 @@ class AdminAnalyticsScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(item['class'] as String, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                      Text(item['class'] as String, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                       const SizedBox(height: 2),
-                      Text(item['defaulters'] as String, style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                      Text(item['defaulters'] as String, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
                     ],
                   ),
                 ),
@@ -290,8 +292,15 @@ class AdminAnalyticsScreen extends StatelessWidget {
                   children: [
                     Container(width: 10, height: 10, decoration: BoxDecoration(color: item['color'] as Color, shape: BoxShape.circle)),
                     const SizedBox(width: 8),
-                    Text(item['name'] as String, style: const TextStyle(fontSize: 12)),
-                    const Spacer(),
+                    Expanded(
+                      child: Text(
+                        item['name'] as String,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
                     Text(item['share'] as String, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                   ],
                 ),

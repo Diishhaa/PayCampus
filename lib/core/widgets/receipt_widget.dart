@@ -198,7 +198,7 @@ class ReceiptWidget extends StatelessWidget {
           Flexible(
             child: Text(
               value,
-              textAlign: Alignment.centerRight,
+              textAlign: TextAlign.right,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,

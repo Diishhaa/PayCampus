@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
-import 'otp_screen.dart';
+import 'login_screen.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({super.key});
@@ -107,7 +107,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                             boxShadow: isDark ? [] : AppColors.cardShadow,
                           ),
                           child: const Icon(
-                            Icons.anti_gravity_rounded, // fallback icon resembling orbits / anti-gravity fintech logo
+                            Icons.payments_rounded, // fallback icon resembling orbits / anti-gravity fintech logo
                             color: AppColors.primary,
                             size: 64,
                           ),
@@ -162,7 +162,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const OtpScreen(isAdmin: false),
+                              builder: (context) => const LoginScreen(isAdmin: false),
                             ),
                           );
                         },
@@ -180,7 +180,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const OtpScreen(isAdmin: true),
+                              builder: (context) => const LoginScreen(isAdmin: true),
                             ),
                           );
                         },

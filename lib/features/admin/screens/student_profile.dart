@@ -182,11 +182,10 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
             child: Divider(color: AppColors.border, height: 1),
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildMetric("TOTAL ANNUAL", "₹${widget.student.totalAmount.toStringAsFixed(0)}", isDark),
-              _buildMetric("COLLECTED", "₹${(widget.student.totalAmount - widget.student.pendingAmount).toStringAsFixed(0)}", isDark, color: AppColors.success),
-              _buildMetric("PENDING", "₹${widget.student.pendingAmount.toStringAsFixed(0)}", isDark, color: widget.student.pendingAmount > 0 ? AppColors.warning : AppColors.success),
+              Expanded(child: _buildMetric("TOTAL ANNUAL", "₹${widget.student.totalAmount.toStringAsFixed(0)}", isDark)),
+              Expanded(child: _buildMetric("COLLECTED", "₹${(widget.student.totalAmount - widget.student.pendingAmount).toStringAsFixed(0)}", isDark, color: AppColors.success)),
+              Expanded(child: _buildMetric("PENDING", "₹${widget.student.pendingAmount.toStringAsFixed(0)}", isDark, color: widget.student.pendingAmount > 0 ? AppColors.warning : AppColors.success)),
             ],
           ),
         ],
@@ -199,6 +198,8 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
       children: [
         Text(
           label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.bold,
@@ -209,6 +210,8 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
         const SizedBox(height: 4),
         Text(
           value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
