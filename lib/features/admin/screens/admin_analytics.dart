@@ -69,9 +69,9 @@ class AdminAnalyticsScreen extends StatelessWidget {
   Widget _buildAiInsightsCarousel(BuildContext context, bool isDark) {
     final insights = [
       {
-        'text': 'Projected collection this month is ₹8.6L. High probability of matching targets.',
+        'text': 'Projected revenue this month is ₹8.6L. High probability of matching targets.',
         'metric': '₹8.6L',
-        'sub': 'Expected Collection',
+        'sub': 'Expected Revenue',
         'icon': Icons.trending_up,
       },
       {

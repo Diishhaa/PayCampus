@@ -135,7 +135,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     children: [
                       Expanded(
                         child: KpiCard(
-                          title: "TODAY'S COLLECTION",
+                          title: "TODAY'S REVENUE",
                           value: "₹1,24,500",
                           trend: "+14.2%",
                           isPositive: true,
@@ -260,7 +260,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "COLLECTION TRENDS (JULY)",
+                      "REVENUE TRENDS (JULY)",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
