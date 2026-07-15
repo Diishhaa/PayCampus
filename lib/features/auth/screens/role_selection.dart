@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
+import '../../../main.dart';
 import 'login_screen.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
@@ -70,6 +71,29 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: AppColors.accent.withOpacity(0.05),
+              ),
+            ),
+          ),
+          
+          Positioned(
+            top: 10,
+            right: 10,
+            child: SafeArea(
+              child: ValueListenableBuilder<ThemeMode>(
+                valueListenable: themeModeNotifier,
+                builder: (context, mode, _) {
+                  final isThemeDark = mode == ThemeMode.dark || (mode == ThemeMode.system && isDark);
+                  return IconButton(
+                    icon: Icon(
+                      isThemeDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                      color: isThemeDark ? Colors.white : AppColors.textPrimary,
+                      size: 28,
+                    ),
+                    onPressed: () {
+                      themeModeNotifier.value = isThemeDark ? ThemeMode.light : ThemeMode.dark;
+                    },
+                  );
+                },
               ),
             ),
           ),

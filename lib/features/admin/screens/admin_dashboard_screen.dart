@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
 import '../../../core/widgets/kpi_card.dart';
 import '../../../core/services/mock_database.dart';
+import '../../../main.dart';
 import '../../auth/screens/role_selection.dart';
 import 'reconciliation_queue.dart';
 import 'students_directory.dart';
@@ -134,6 +135,21 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             backgroundColor: Colors.transparent,
             elevation: 0,
             actions: [
+              ValueListenableBuilder<ThemeMode>(
+                valueListenable: themeModeNotifier,
+                builder: (context, mode, _) {
+                  final isThemeDark = mode == ThemeMode.dark || (mode == ThemeMode.system && isDark);
+                  return IconButton(
+                    icon: Icon(
+                      isThemeDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                    ),
+                    onPressed: () {
+                      themeModeNotifier.value = isThemeDark ? ThemeMode.light : ThemeMode.dark;
+                    },
+                    tooltip: "Toggle Theme Mode",
+                  );
+                },
+              ),
               IconButton(
                 onPressed: () {
                   Navigator.pushAndRemoveUntil(

@@ -3,6 +3,7 @@ import '../../../core/constants/colors.dart';
 import '../../../models/student.dart';
 import '../../../models/transaction.dart';
 import '../../../core/services/mock_database.dart';
+import '../../../main.dart';
 import '../../auth/screens/role_selection.dart';
 import 'fee_details.dart';
 import 'notifications.dart';
@@ -124,17 +125,36 @@ class _ParentDashboardState extends State<ParentDashboard> {
                           ),
                         ],
                       ),
-                      IconButton(
-                        onPressed: () {
-                          // Go back to login/portal switcher
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
-                            (route) => false,
-                          );
-                        },
-                        icon: const Icon(Icons.logout_rounded),
-                        tooltip: "Switch Portal",
+                      Row(
+                        children: [
+                          ValueListenableBuilder<ThemeMode>(
+                            valueListenable: themeModeNotifier,
+                            builder: (context, mode, _) {
+                              final isThemeDark = mode == ThemeMode.dark || (mode == ThemeMode.system && isDark);
+                              return IconButton(
+                                icon: Icon(
+                                  isThemeDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                                ),
+                                onPressed: () {
+                                  themeModeNotifier.value = isThemeDark ? ThemeMode.light : ThemeMode.dark;
+                                },
+                                tooltip: "Toggle Theme Mode",
+                              );
+                            },
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              // Go back to login/portal switcher
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
+                                (route) => false,
+                              );
+                            },
+                            icon: const Icon(Icons.logout_rounded),
+                            tooltip: "Switch Portal",
+                          ),
+                        ],
                       ),
                     ],
                   ),
