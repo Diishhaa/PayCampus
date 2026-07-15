@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
 import '../../../models/student.dart';
+import '../../../core/services/mock_database.dart';
 
 class StudentProfileScreen extends StatefulWidget {
   final Student student;
@@ -15,10 +16,12 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
   final _notesController = TextEditingController(text: "Parent requested waiver for transportation fees due to medical leave. Under review.");
   bool _isEditingNotes = false;
 
+  Student get student => MockDatabase().getStudentById(widget.student.id) ?? widget.student;
+
   void _sendReminder() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("Alert: Custom reminder SMS sent to the parent of ${widget.student.name}."),
+        content: Text("Alert: Custom reminder SMS sent to the parent of ${student.name}."),
         backgroundColor: AppColors.primary,
         behavior: SnackBarBehavior.floating,
       ),
@@ -36,109 +39,116 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Student Billing Ledger", style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : AppColors.textPrimary),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Summary Profile Header Card
-                _buildHeaderCard(isDark),
-                const SizedBox(height: 24),
+    return AnimatedBuilder(
+      animation: MockDatabase(),
+      builder: (context, _) {
+        final currentStudent = student;
 
-                // AI insight snippet
-                _buildInsightSnippet(isDark),
-                const SizedBox(height: 24),
-                
-                // Tabs / Sections: Timeline, Waivers, Notes
-                Text(
-                  "Billing Timeline",
-                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 12),
-                _buildTimelineList(isDark),
-
-                const SizedBox(height: 24),
-
-                // Notes Section
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Administrative Notes",
-                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _isEditingNotes = !_isEditingNotes;
-                        });
-                      },
-                      child: Text(_isEditingNotes ? "Save Notes" : "Edit"),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                _buildNotesCard(isDark),
-                
-                const SizedBox(height: 32),
-                
-                // Send Reminder / Action Row
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          // Mock waiver adjustment dialog
-                          _showWaiverDialog(context);
-                        },
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                        child: const Text("Adjust Waivers"),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: _sendReminder,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          backgroundColor: AppColors.primary,
-                        ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.notifications_active_rounded, size: 16),
-                            SizedBox(width: 8),
-                            Text("Send Reminder"),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 40),
-              ],
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Student Billing Ledger", style: TextStyle(fontWeight: FontWeight.bold)),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : AppColors.textPrimary),
+              onPressed: () => Navigator.pop(context),
             ),
           ),
-        ),
-      ),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Summary Profile Header Card
+                    _buildHeaderCard(currentStudent, isDark),
+                    const SizedBox(height: 24),
+
+                    // AI insight snippet
+                    _buildInsightSnippet(isDark),
+                    const SizedBox(height: 24),
+                    
+                    // Tabs / Sections: Timeline, Waivers, Notes
+                    Text(
+                      "Billing Timeline",
+                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildTimelineList(isDark),
+
+                    const SizedBox(height: 24),
+
+                    // Notes Section
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Administrative Notes",
+                          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _isEditingNotes = !_isEditingNotes;
+                            });
+                          },
+                          child: Text(_isEditingNotes ? "Save Notes" : "Edit"),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    _buildNotesCard(isDark),
+                    
+                    const SizedBox(height: 32),
+                    
+                    // Send Reminder / Action Row
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              // Mock waiver adjustment dialog
+                              _showWaiverDialog(context);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            child: const Text("Adjust Waivers"),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: _sendReminder,
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              backgroundColor: AppColors.primary,
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.notifications_active_rounded, size: 16),
+                                SizedBox(width: 8),
+                                Text("Send Reminder"),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 40),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildHeaderCard(bool isDark) {
+  Widget _buildHeaderCard(Student student, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -154,7 +164,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                 radius: 28,
                 backgroundColor: AppColors.primary.withOpacity(0.08),
                 child: Text(
-                  widget.student.name[0],
+                  student.name[0],
                   style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.primary),
                 ),
               ),
@@ -164,12 +174,12 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.student.name,
+                      student.name,
                       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "${widget.student.grade} • Roll ${widget.student.rollNo}",
+                      "${student.grade} • Roll ${student.rollNo}",
                       style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
                     ),
                   ],
@@ -183,9 +193,9 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
           ),
           Row(
             children: [
-              Expanded(child: _buildMetric("TOTAL ANNUAL", "₹${widget.student.totalAmount.toStringAsFixed(0)}", isDark)),
-              Expanded(child: _buildMetric("COLLECTED", "₹${(widget.student.totalAmount - widget.student.pendingAmount).toStringAsFixed(0)}", isDark, color: AppColors.success)),
-              Expanded(child: _buildMetric("PENDING", "₹${widget.student.pendingAmount.toStringAsFixed(0)}", isDark, color: widget.student.pendingAmount > 0 ? AppColors.warning : AppColors.success)),
+              Expanded(child: _buildMetric("TOTAL ANNUAL", "₹${student.totalAmount.toStringAsFixed(0)}", isDark)),
+              Expanded(child: _buildMetric("COLLECTED", "₹${(student.totalAmount - student.pendingAmount).toStringAsFixed(0)}", isDark, color: AppColors.success)),
+              Expanded(child: _buildMetric("PENDING", "₹${student.pendingAmount.toStringAsFixed(0)}", isDark, color: student.pendingAmount > 0 ? AppColors.warning : AppColors.success)),
             ],
           ),
         ],
@@ -330,6 +340,8 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
   }
 
   void _showWaiverDialog(BuildContext context) {
+    final amountController = TextEditingController();
+
     showDialog(
       context: context,
       builder: (context) {
@@ -337,16 +349,17 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
           title: const Text("Adjust Fee Waivers"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            children: [
               TextField(
-                decoration: InputDecoration(
+                controller: amountController,
+                decoration: const InputDecoration(
                   labelText: "Waiver Amount (₹)",
                   hintText: "Enter waiver amount",
                 ),
                 keyboardType: TextInputType.number,
               ),
-              SizedBox(height: 16),
-              TextField(
+              const SizedBox(height: 16),
+              const TextField(
                 decoration: InputDecoration(
                   labelText: "Reason for Waiver",
                   hintText: "Medical / Scholarship etc.",
@@ -361,10 +374,12 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
             ),
             ElevatedButton(
               onPressed: () {
+                final amount = double.tryParse(amountController.text) ?? 0.0;
+                MockDatabase().waiveFeeForStudent(student.id, amount);
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Waiver adjustment published successfully."),
+                  SnackBar(
+                    content: Text("Waiver adjustment of ₹${amount.toStringAsFixed(0)} applied successfully!"),
                     backgroundColor: AppColors.success,
                   ),
                 );

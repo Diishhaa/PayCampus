@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
+import '../../../core/services/mock_database.dart';
 
 class FeeBuilderScreen extends StatefulWidget {
   const FeeBuilderScreen({super.key});
@@ -54,6 +55,14 @@ class _FeeBuilderScreenState extends State<FeeBuilderScreen> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
+                
+                final amount = double.tryParse(_amountController.text) ?? 0.0;
+                MockDatabase().addFeeDemand(
+                  feeName: _nameController.text,
+                  amount: amount,
+                  targetGrade: _targetGrade,
+                );
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text("Fee structure '${_nameController.text}' published successfully!"),
