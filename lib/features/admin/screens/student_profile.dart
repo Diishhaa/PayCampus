@@ -242,11 +242,11 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
       ),
       child: const Row(
         children: [
-          Icon(Icons.auto_awesome, color: AppColors.primary, size: 18),
+          Icon(Icons.insights_rounded, color: AppColors.primary, size: 18),
           SizedBox(width: 10),
           Expanded(
             child: Text(
-              "AI Prediction: Parent has high credit confidence. Expected repayment probability is 92%.",
+              "Defaulter Risk Analysis: Parent has high credit confidence. Expected repayment probability is 92%.",
               style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary),
             ),
           ),

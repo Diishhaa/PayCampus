@@ -106,10 +106,39 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                             ),
                             boxShadow: isDark ? [] : AppColors.cardShadow,
                           ),
-                          child: const Icon(
-                            Icons.payments_rounded, // fallback icon resembling orbits / anti-gravity fintech logo
-                            color: AppColors.primary,
-                            size: 64,
+                          child: SizedBox(
+                            width: 80,
+                            height: 80,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Icon(
+                                  Icons.school_rounded,
+                                  color: AppColors.primary.withOpacity(0.18),
+                                  size: 72,
+                                ),
+                                Transform.translate(
+                                  offset: const Offset(14, 14),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                                        width: 2.5,
+                                      ),
+                                      boxShadow: isDark ? [] : AppColors.cardShadow,
+                                    ),
+                                    child: const Icon(
+                                      Icons.credit_card_rounded,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         const SizedBox(height: 24),

@@ -26,7 +26,7 @@ class _OcrVerificationScreenState extends State<OcrVerificationScreen>
   late Animation<double> _scannerAnimation;
   
   String _currentStep = 'Processing'; // Processing, Matched, Verified
-  String _statusText = 'Initializing AI OCR Engine...';
+  String _statusText = 'Initializing smart scan reader...';
   double _extractedAmount = 0.0;
   String _extractedUtr = 'UTR829402948293';
 
@@ -49,7 +49,7 @@ class _OcrVerificationScreenState extends State<OcrVerificationScreen>
     // Step 1: Processing OCR
     setState(() {
       _currentStep = 'Processing';
-      _statusText = 'Scanning image with Gemini AI...';
+      _statusText = 'Scanning image with digital reader...';
     });
 
     final ocrResults = await OcrService().parseReceipt(
@@ -111,7 +111,7 @@ class _OcrVerificationScreenState extends State<OcrVerificationScreen>
             children: [
               const SizedBox(height: 20),
               Text(
-                "AI Verification",
+                "Digital Scan",
                 textAlign: TextAlign.center,
                 style: theme.textTheme.displayMedium?.copyWith(
                   fontWeight: FontWeight.bold,

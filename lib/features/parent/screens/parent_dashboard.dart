@@ -212,18 +212,18 @@ class _ParentDashboardState extends State<ParentDashboard> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.auto_awesome, color: AppColors.warning, size: 20),
+                          const Icon(Icons.notifications_active_rounded, color: AppColors.warning, size: 20),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  "AI SMART REMINDER",
+                                const Text(
+                                  "SMART BILLING ALERT",
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.warning.withOpacity(0.8),
+                                    color: AppColors.warning,
                                     letterSpacing: 0.5,
                                   ),
                                 ),

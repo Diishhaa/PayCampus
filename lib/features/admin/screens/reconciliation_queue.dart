@@ -55,7 +55,7 @@ class _ReconciliationQueueScreenState extends State<ReconciliationQueueScreen> {
         return Scaffold(
           appBar: AppBar(
             title: Text(
-              "AI Reconciliation Queue",
+              "Reconciliation Queue",
               style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             automaticallyImplyLeading: false,
@@ -72,7 +72,7 @@ class _ReconciliationQueueScreenState extends State<ReconciliationQueueScreen> {
                   child: _queue.isEmpty
                       ? const PremiumEmptyState(
                           title: "Audit Queue Cleared",
-                          description: "Excellent work! All submitted parent transaction receipts have been verified by AI or manually approved.",
+                          description: "Excellent work! All submitted parent transaction receipts have been verified and reconciled.",
                           icon: Icons.done_all,
                         )
                       : ListView.builder(
@@ -231,7 +231,7 @@ class _ReconciliationQueueScreenState extends State<ReconciliationQueueScreen> {
                               matched: _selectedItem!.utrExtracted.isNotEmpty
                             ),
                             _buildExtractedRow(
-                              "OCR Confidence", 
+                              "Scan Match Rate", 
                               "${(_selectedItem!.confidenceScore * 100).toStringAsFixed(0)}%", 
                               isDark, 
                               matched: _selectedItem!.confidenceScore >= 0.85
@@ -338,7 +338,7 @@ class _ReconciliationQueueScreenState extends State<ReconciliationQueueScreen> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        "${(score * 100).toStringAsFixed(0)}% Conf",
+        "${(score * 100).toStringAsFixed(0)}% Match",
         style: TextStyle(
           color: fg,
           fontWeight: FontWeight.bold,

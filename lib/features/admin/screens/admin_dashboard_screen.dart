@@ -362,7 +362,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text("AI Alert: Bulk outstanding fee notifications sent to 36 parents."),
+                  content: Text("System Alert: Bulk outstanding fee notifications sent to 36 parents."),
                   backgroundColor: AppColors.primary,
                 ),
               );

@@ -19,7 +19,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     {
       'id': 'UPI',
       'title': 'UPI (PhonePe, GPay, Paytm)',
-      'subtitle': 'Instant verification via AI scanning',
+      'subtitle': 'Instant verification via smart scanning',
       'icon': Icons.qr_code_scanner_rounded,
     },
     {
@@ -93,7 +93,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                "Complete the payment using any UPI application, then upload the screenshot for AI verification.",
+                "Complete the payment using any UPI application, then upload the screenshot for automatic verification.",
                 style: TextStyle(
                   fontSize: 14,
                   color: isDark ? const Color(0xFF94A3B8) : AppColors.textSecondary,
