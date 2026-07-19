@@ -27,13 +27,13 @@ class AdminAnalyticsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // AI Insights Cards Carousel
+              // Financial Insights Cards Carousel
               Text(
-                "AI Financial Insights",
+                "Financial Analytics Insights",
                 style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
-              _buildAiInsightsCarousel(context, isDark),
+              _buildAnalyticsInsightsCarousel(context, isDark),
               
               const SizedBox(height: 24),
 
@@ -66,7 +66,7 @@ class AdminAnalyticsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAiInsightsCarousel(BuildContext context, bool isDark) {
+  Widget _buildAnalyticsInsightsCarousel(BuildContext context, bool isDark) {
     final insights = [
       {
         'text': 'Projected revenue this month is ₹8.6L. High probability of matching targets.',

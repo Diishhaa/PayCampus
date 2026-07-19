@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
 import '../../../core/widgets/kpi_card.dart';
+import '../../../core/services/mock_database.dart';
+import '../../../main.dart';
 import '../../auth/screens/role_selection.dart';
 import 'reconciliation_queue.dart';
 import 'students_directory.dart';
@@ -75,170 +77,214 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "PayCampus Admin",
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-                letterSpacing: 0.5,
-              ),
+    return AnimatedBuilder(
+      animation: MockDatabase(),
+      builder: (context, _) {
+        final db = MockDatabase();
+
+        // 1. Outstanding Balance Sum
+        final outstandingSum = db.students.fold<double>(0.0, (sum, s) => sum + s.pendingAmount);
+        final outstandingStr = "₹${(813900 + outstandingSum).toStringAsFixed(0)}";
+
+        // 2. Today's Revenue Sum
+        final today = DateTime.now();
+        final todayVerifiedSum = db.transactions
+            .where((t) =>
+                t.status == "Verified" &&
+                t.date.year == today.year &&
+                t.date.month == today.month &&
+                t.date.day == today.day)
+            .fold<double>(0.0, (sum, t) => sum + t.amount);
+        final revenueStr = "₹${(124500 + todayVerifiedSum).toStringAsFixed(0)}";
+
+        // 3. Paid Students fraction
+        final paidStudentsCount = db.students.where((s) => s.pendingAmount == 0).length;
+        final paidStr = "${384 + paidStudentsCount} / 420";
+
+        // 4. Defaulters count
+        final defaultersCount = db.students.where((s) => s.pendingAmount > 0).length;
+        final defaultersStr = "${32 + defaultersCount}";
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "PayCampus Admin",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                Text(
+                  "Greenwood Billing Desk",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
-            Text(
-              "Greenwood Billing Desk",
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            actions: [
+              ValueListenableBuilder<ThemeMode>(
+                valueListenable: themeModeNotifier,
+                builder: (context, mode, _) {
+                  final isThemeDark = mode == ThemeMode.dark || (mode == ThemeMode.system && isDark);
+                  return IconButton(
+                    icon: Icon(
+                      isThemeDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                    ),
+                    onPressed: () {
+                      themeModeNotifier.value = isThemeDark ? ThemeMode.light : ThemeMode.dark;
+                    },
+                    tooltip: "Toggle Theme Mode",
+                  );
+                },
               ),
-            ),
-          ],
-        ),
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
-                (route) => false,
-              );
-            },
-            icon: const Icon(Icons.logout_rounded),
-            tooltip: "Switch Portal",
+              IconButton(
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
+                    (route) => false,
+                  );
+                },
+                icon: const Icon(Icons.logout_rounded),
+                tooltip: "Switch Portal",
+              ),
+            ],
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () async {
-            await Future.delayed(const Duration(seconds: 1));
-          },
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // KPI Grid Row 1
-                  Row(
+          body: SafeArea(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                await Future.delayed(const Duration(seconds: 1));
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: KpiCard(
-                          title: "TODAY'S REVENUE",
-                          value: "₹1,24,500",
-                          trend: "+14.2%",
-                          isPositive: true,
-                          icon: Icons.payments,
-                          iconColor: AppColors.success,
-                          iconBgColor: AppColors.success.withOpacity(0.1),
-                        ),
+                      // KPI Grid Row 1
+                      Row(
+                        children: [
+                          Expanded(
+                            child: KpiCard(
+                              title: "TODAY'S REVENUE",
+                              value: revenueStr,
+                              trend: "+14.2%",
+                              isPositive: true,
+                              icon: Icons.payments,
+                              iconColor: AppColors.success,
+                              iconBgColor: AppColors.success.withOpacity(0.1),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: KpiCard(
+                              title: "OUTSTANDING BALANCE",
+                              value: outstandingStr,
+                              trend: "-8.4%",
+                              isPositive: false,
+                              icon: Icons.pending_actions,
+                              iconColor: AppColors.warning,
+                              iconBgColor: AppColors.warning.withOpacity(0.1),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: KpiCard(
-                          title: "OUTSTANDING BALANCE",
-                          value: "₹8,62,400",
-                          trend: "-8.4%",
-                          isPositive: false,
-                          icon: Icons.pending_actions,
-                          iconColor: AppColors.warning,
-                          iconBgColor: AppColors.warning.withOpacity(0.1),
-                        ),
+                      const SizedBox(height: 8),
+                      // KPI Grid Row 2
+                      Row(
+                        children: [
+                          Expanded(
+                            child: KpiCard(
+                              title: "STUDENTS PAID",
+                              value: paidStr,
+                              trend: "+2.3%",
+                              isPositive: true,
+                              icon: Icons.check_circle,
+                              iconColor: AppColors.primary,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: KpiCard(
+                              title: "PENDING DEFAULTERS",
+                              value: defaultersStr,
+                              trend: "-12.5%",
+                              isPositive: true,
+                              icon: Icons.people_outline,
+                              iconColor: AppColors.error,
+                              iconBgColor: AppColors.error.withOpacity(0.1),
+                            ),
+                          ),
+                        ],
                       ),
+                      const SizedBox(height: 24),
+
+                      // Graph Card
+                      _buildCollectionGraphCard(context, isDark),
+                      const SizedBox(height: 24),
+
+                      // Quick Actions Row
+                      Text(
+                        "Quick Actions",
+                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildQuickActionsRow(context, isDark),
+
+                      const SizedBox(height: 24),
+
+                      // Recent Activity
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "Recent Billing Log",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _currentIndex = 1; // route to queue/audit log
+                              });
+                            },
+                            child: const Text("View Audit Queue"),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      _buildActivityList(isDark),
+                      const SizedBox(height: 24),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  // KPI Grid Row 2
-                  Row(
-                    children: [
-                      Expanded(
-                        child: KpiCard(
-                          title: "STUDENTS PAID",
-                          value: "384 / 420",
-                          trend: "+2.3%",
-                          isPositive: true,
-                          icon: Icons.check_circle,
-                          iconColor: AppColors.primary,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: KpiCard(
-                          title: "PENDING DEFAULTERS",
-                          value: "36",
-                          trend: "-12.5%",
-                          isPositive: true,
-                          icon: Icons.people_outline,
-                          iconColor: AppColors.error,
-                          iconBgColor: AppColors.error.withOpacity(0.1),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Graph Card
-                  _buildCollectionGraphCard(context, isDark),
-                  const SizedBox(height: 24),
-
-                  // Quick Actions Row
-                  Text(
-                    "Quick Actions",
-                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildQuickActionsRow(context, isDark),
-
-                  const SizedBox(height: 24),
-
-                  // Recent Activity
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Recent Billing Log",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _currentIndex = 1; // route to queue/audit log
-                          });
-                        },
-                        child: const Text("View Audit Queue"),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  _buildActivityList(isDark),
-                  const SizedBox(height: 24),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
   Widget _buildCollectionGraphCard(BuildContext context, bool isDark) {
-    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -332,7 +378,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text("AI Alert: Bulk outstanding fee notifications sent to 36 parents."),
+                  content: Text("System Alert: Bulk outstanding fee notifications sent to 36 parents."),
                   backgroundColor: AppColors.primary,
                 ),
               );

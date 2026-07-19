@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
 import '../../../models/student.dart';
 import '../../../models/transaction.dart';
+import '../../../main.dart';
 import 'receipt_screen.dart';
 
 class ParentProfileScreen extends StatelessWidget {
@@ -298,6 +299,24 @@ class ParentProfileScreen extends StatelessWidget {
           _buildSettingsTile(Icons.mail_outline, "Monthly Email Statement", true, isDark),
           const Divider(height: 1, color: AppColors.border),
           _buildSettingsTile(Icons.fingerprint, "Biometric Login Auth", false, isDark),
+          const Divider(height: 1, color: AppColors.border),
+          ValueListenableBuilder<ThemeMode>(
+            valueListenable: themeModeNotifier,
+            builder: (context, mode, _) {
+              final isThemeDark = mode == ThemeMode.dark || (mode == ThemeMode.system && isDark);
+              return ListTile(
+                leading: Icon(Icons.dark_mode_outlined, color: isDark ? const Color(0xFF94A3B8) : AppColors.textSecondary),
+                title: const Text("Dark Theme Mode", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                trailing: Switch(
+                  value: isThemeDark,
+                  activeColor: AppColors.primary,
+                  onChanged: (bool value) {
+                    themeModeNotifier.value = value ? ThemeMode.dark : ThemeMode.light;
+                  },
+                ),
+              );
+            },
+          ),
         ],
       ),
     );

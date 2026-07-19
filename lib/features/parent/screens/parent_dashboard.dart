@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
 import '../../../models/student.dart';
 import '../../../models/transaction.dart';
+import '../../../core/services/mock_database.dart';
+import '../../../main.dart';
 import '../../auth/screens/role_selection.dart';
 import 'fee_details.dart';
 import 'notifications.dart';
@@ -20,90 +22,68 @@ class ParentDashboard extends StatefulWidget {
 class _ParentDashboardState extends State<ParentDashboard> {
   int _currentIndex = 0;
 
-  // Mock Transactions for this student
-  late List<PaymentTransaction> _transactions;
-
-  @override
-  void initState() {
-    super.initState();
-    _transactions = [
-      PaymentTransaction(
-        id: "txn_101",
-        studentId: widget.student.id,
-        studentName: widget.student.name,
-        feeName: "Term 1 Tuition Fee",
-        amount: 30500.0,
-        date: DateTime.now().subtract(const Duration(days: 45)),
-        status: "Verified",
-        method: "UPI",
-        utr: "UTR829402948293",
-        receiptNo: "REC-2026-9024",
-      ),
-      PaymentTransaction(
-        id: "txn_102",
-        studentId: widget.student.id,
-        studentName: widget.student.name,
-        feeName: "Quarterly Exam Fee",
-        amount: 1500.0,
-        date: DateTime.now().subtract(const Duration(days: 12)),
-        status: "Verified",
-        method: "Bank Transfer",
-        utr: "TXN928402948",
-        receiptNo: "REC-2026-9481",
-      ),
-    ];
-  }
+  Student get student => MockDatabase().getStudentById(widget.student.id) ?? widget.student;
+  List<PaymentTransaction> get _transactions => MockDatabase().getTransactionsForStudent(student.id);
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final List<Widget> tabs = [
-      _buildHomeTab(context, isDark),
-      FeeDetailsScreen(student: widget.student),
-      NotificationsScreen(student: widget.student),
-      ParentProfileScreen(student: widget.student, transactionHistory: _transactions),
-    ];
+    return AnimatedBuilder(
+      animation: MockDatabase(),
+      builder: (context, _) {
+        final currentStudent = student;
+        final currentTransactions = _transactions;
 
-    return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: tabs,
-      ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: "Home",
+        final List<Widget> tabs = [
+          _buildHomeTab(context, isDark),
+          FeeDetailsScreen(student: currentStudent),
+          NotificationsScreen(student: currentStudent),
+          ParentProfileScreen(student: currentStudent, transactionHistory: currentTransactions),
+        ];
+
+        return Scaffold(
+          body: IndexedStack(
+            index: _currentIndex,
+            children: tabs,
           ),
-          NavigationDestination(
-            icon: Icon(Icons.receipt_long_outlined),
-            selectedIcon: Icon(Icons.receipt_long),
-            label: "Fees",
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: _currentIndex,
+            onDestinationSelected: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            destinations: const [
+              NavigationDestination(
+                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.home),
+                label: "Home",
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.receipt_long_outlined),
+                selectedIcon: Icon(Icons.receipt_long),
+                label: "Fees",
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.notifications_none_outlined),
+                selectedIcon: Icon(Icons.notifications),
+                label: "Alerts",
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.person_outline),
+                selectedIcon: Icon(Icons.person),
+                label: "Profile",
+              ),
+            ],
           ),
-          NavigationDestination(
-            icon: Icon(Icons.notifications_none_outlined),
-            selectedIcon: Icon(Icons.notifications),
-            label: "Alerts",
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: "Profile",
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildHomeTab(BuildContext context, bool isDark) {
+    final widget = this;
     final theme = Theme.of(context);
     final formattedPending = "₹${widget.student.pendingAmount.toStringAsFixed(0)}";
     final isPending = widget.student.pendingAmount > 0;
@@ -145,17 +125,36 @@ class _ParentDashboardState extends State<ParentDashboard> {
                           ),
                         ],
                       ),
-                      IconButton(
-                        onPressed: () {
-                          // Go back to login/portal switcher
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
-                            (route) => false,
-                          );
-                        },
-                        icon: const Icon(Icons.logout_rounded),
-                        tooltip: "Switch Portal",
+                      Row(
+                        children: [
+                          ValueListenableBuilder<ThemeMode>(
+                            valueListenable: themeModeNotifier,
+                            builder: (context, mode, _) {
+                              final isThemeDark = mode == ThemeMode.dark || (mode == ThemeMode.system && isDark);
+                              return IconButton(
+                                icon: Icon(
+                                  isThemeDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                                ),
+                                onPressed: () {
+                                  themeModeNotifier.value = isThemeDark ? ThemeMode.light : ThemeMode.dark;
+                                },
+                                tooltip: "Toggle Theme Mode",
+                              );
+                            },
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              // Go back to login/portal switcher
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
+                                (route) => false,
+                              );
+                            },
+                            icon: const Icon(Icons.logout_rounded),
+                            tooltip: "Switch Portal",
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -233,18 +232,18 @@ class _ParentDashboardState extends State<ParentDashboard> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.auto_awesome, color: AppColors.warning, size: 20),
+                          const Icon(Icons.notifications_active_rounded, color: AppColors.warning, size: 20),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  "AI SMART REMINDER",
+                                const Text(
+                                  "SMART BILLING ALERT",
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.warning.withOpacity(0.8),
+                                    color: AppColors.warning,
                                     letterSpacing: 0.5,
                                   ),
                                 ),

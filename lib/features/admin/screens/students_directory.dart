@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
-import '../../../core/widgets/glass_bar.dart';
 import '../../../models/student.dart';
+import '../../../core/services/mock_database.dart';
 import 'student_profile.dart';
 
 class StudentsDirectoryScreen extends StatefulWidget {
@@ -15,49 +15,7 @@ class _StudentsDirectoryScreenState extends State<StudentsDirectoryScreen> {
   final _searchController = TextEditingController();
   String _selectedClassFilter = 'All Classes';
 
-  // Mock list of all school students
-  final List<Student> _allStudents = [
-    const Student(
-      id: "stud_1",
-      name: "Rahul Sharma",
-      rollNo: "GIS/2026/084",
-      grade: "Grade 8-A",
-      schoolName: "Greenwood International School",
-      avatarUrl: "https://api.dicebear.com/7.x/adventurer/svg?seed=Rahul",
-      pendingAmount: 14500.0,
-      totalAmount: 45000.0,
-    ),
-    const Student(
-      id: "stud_2",
-      name: "Sneha Sharma",
-      rollNo: "GIS/2026/112",
-      grade: "Grade 5-B",
-      schoolName: "Greenwood International School",
-      avatarUrl: "https://api.dicebear.com/7.x/adventurer/svg?seed=Sneha",
-      pendingAmount: 4200.0,
-      totalAmount: 38000.0,
-    ),
-    const Student(
-      id: "stud_3",
-      name: "Karan Gupta",
-      rollNo: "GIS/2026/012",
-      grade: "Grade 10-A",
-      schoolName: "Greenwood International School",
-      avatarUrl: "https://api.dicebear.com/7.x/adventurer/svg?seed=Karan",
-      pendingAmount: 22000.0,
-      totalAmount: 52000.0,
-    ),
-    const Student(
-      id: "stud_4",
-      name: "Ananya Iyer",
-      rollNo: "GIS/2026/204",
-      grade: "Grade 8-A",
-      schoolName: "Greenwood International School",
-      avatarUrl: "https://api.dicebear.com/7.x/adventurer/svg?seed=Ananya",
-      pendingAmount: 0.0,
-      totalAmount: 45000.0,
-    ),
-  ];
+  List<Student> get _allStudents => MockDatabase().students;
 
   List<Student> get _filteredStudents {
     return _allStudents.where((student) {
@@ -81,175 +39,223 @@ class _StudentsDirectoryScreenState extends State<StudentsDirectoryScreen> {
 
     final classFilters = ['All Classes', 'Grade 8-A', 'Grade 5-B', 'Grade 10-A'];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Student Directory",
-          style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Glassmorphic Search Bar
-              GlassSearchBar(
-                hintText: "Search name or admission number...",
-                controller: _searchController,
-                onChanged: (_) {
-                  setState(() {});
-                },
-              ),
-              const SizedBox(height: 16),
-              
-              // Class Filter Chips
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: classFilters.map((className) {
-                    final isSelected = _selectedClassFilter == className;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: FilterChip(
-                        selected: isSelected,
-                        label: Text(className),
-                        onSelected: (selected) {
-                          setState(() {
-                            _selectedClassFilter = className;
-                          });
-                        },
-                        selectedColor: AppColors.primary.withOpacity(0.12),
-                        checkmarkColor: AppColors.primary,
-                        labelStyle: TextStyle(
-                          fontSize: 12,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isSelected ? AppColors.primary : (isDark ? Colors.white70 : AppColors.textSecondary),
-                        ),
+    return AnimatedBuilder(
+      animation: MockDatabase(),
+      builder: (context, _) {
+        final students = _filteredStudents;
+        
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              "Student Directory",
+              style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Glassmorphic Search Bar
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isDark ? const Color(0xFF334155) : AppColors.border,
                       ),
-                    );
-                  }).toList(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              
-              // Count Row
-              Text(
-                "Showing ${_filteredStudents.length} Students",
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? const Color(0xFF64748B) : AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 12),
+                    ),
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: (val) {
+                        setState(() {});
+                      },
+                      decoration: const InputDecoration(
+                        hintText: "Search student by name or roll number...",
+                        prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        filled: false,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
 
-              // Student List representation
-              Expanded(
-                child: _filteredStudents.isEmpty
-                    ? const Center(child: Text("No students match the criteria"))
-                    : ListView.builder(
-                        itemCount: _filteredStudents.length,
-                        itemBuilder: (context, index) {
-                          final student = _filteredStudents[index];
-                          final progressText = "${(student.paymentProgress * 100).toStringAsFixed(0)}% paid";
-                          final isPaid = student.pendingAmount == 0.0;
-                          
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            child: ListTile(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => StudentProfileScreen(student: student),
-                                  ),
-                                );
-                              },
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                              leading: CircleAvatar(
-                                backgroundColor: AppColors.primary.withOpacity(0.08),
-                                radius: 24,
-                                child: Text(
-                                  student.name[0],
-                                  style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary),
+                  // Horizontal Filter Tags
+                  SizedBox(
+                    height: 36,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: classFilters.length,
+                      itemBuilder: (context, index) {
+                        final filter = classFilters[index];
+                        final isSelected = _selectedClassFilter == filter;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _selectedClassFilter = filter;
+                              });
+                            },
+                            borderRadius: BorderRadius.circular(30),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: isSelected 
+                                    ? AppColors.primary 
+                                    : (isDark ? const Color(0xFF1E293B) : Colors.white),
+                                borderRadius: BorderRadius.circular(30),
+                                border: Border.all(
+                                  color: isSelected 
+                                      ? AppColors.primary 
+                                      : (isDark ? const Color(0xFF334155) : AppColors.border),
                                 ),
                               ),
-                              title: Text(
-                                student.name,
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                              child: Text(
+                                filter,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: isSelected ? Colors.white : AppColors.textSecondary,
+                                ),
                               ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 4),
-                                  Text("${student.grade} • Roll ${student.rollNo}", style: const TextStyle(fontSize: 12)),
-                                  const SizedBox(height: 6),
-                                  // Simple progress bar
-                                  Row(
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Students List
+                  Expanded(
+                    child: students.isEmpty
+                        ? const Center(
+                            child: Text(
+                              "No students found matching filters",
+                              style: TextStyle(color: AppColors.textSecondary),
+                            ),
+                          )
+                        : ListView.builder(
+                            itemCount: students.length,
+                            itemBuilder: (context, index) {
+                              final student = students[index];
+                              final isPaid = student.pendingAmount == 0;
+                              final progressText = "${(student.paymentProgress * 100).toStringAsFixed(0)}% paid";
+
+                              return Card(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  side: BorderSide(
+                                    color: isDark ? const Color(0xFF334155) : AppColors.border,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: ListTile(
+                                  contentPadding: const EdgeInsets.all(12),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => StudentProfileScreen(student: student),
+                                      ),
+                                    );
+                                  },
+                                  leading: CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor: AppColors.primary.withOpacity(0.08),
+                                    child: Text(
+                                      student.name[0],
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                  title: Text(
+                                    student.name,
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  subtitle: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Expanded(
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(4),
-                                          child: LinearProgressIndicator(
-                                            value: student.paymentProgress,
-                                            minHeight: 4,
-                                            backgroundColor: isDark ? const Color(0xFF334155) : AppColors.border,
-                                            valueColor: AlwaysStoppedAnimation<Color>(
-                                              isPaid ? AppColors.success : AppColors.primary,
+                                      const SizedBox(height: 4),
+                                      Text("${student.grade} • Roll ${student.rollNo}"),
+                                      const SizedBox(height: 8),
+                                      // Progress Bar
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(2),
+                                              child: SizedBox(
+                                                height: 4,
+                                                child: LinearProgressIndicator(
+                                                  value: student.paymentProgress,
+                                                  minHeight: 4,
+                                                  backgroundColor: isDark ? const Color(0xFF334155) : AppColors.border,
+                                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                                    isPaid ? AppColors.success : AppColors.primary,
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                           ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            progressText,
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.bold,
+                                              color: isPaid ? AppColors.success : AppColors.textSecondary,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  trailing: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        isPaid ? "₹0" : "₹${student.pendingAmount.toStringAsFixed(0)}",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                          color: isPaid ? AppColors.success : AppColors.warning,
                                         ),
                                       ),
-                                      const SizedBox(width: 8),
+                                      const SizedBox(height: 4),
                                       Text(
-                                        progressText,
+                                        isPaid ? "Settled" : "Due",
                                         style: TextStyle(
-                                          fontSize: 11,
+                                          fontSize: 10,
                                           fontWeight: FontWeight.bold,
-                                          color: isPaid ? AppColors.success : AppColors.textSecondary,
+                                          color: isPaid ? AppColors.success : AppColors.warning,
                                         ),
                                       ),
                                     ],
                                   ),
-                                ],
-                              ),
-                              trailing: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    isPaid ? "₹0" : "₹${student.pendingAmount.toStringAsFixed(0)}",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                      color: isPaid ? AppColors.success : AppColors.warning,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    isPaid ? "Settled" : "Due",
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                      color: isPaid ? AppColors.success : AppColors.warning,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                                ),
+                              );
+                            },
+                          ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
+import '../../../main.dart';
 import 'login_screen.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
@@ -74,6 +75,29 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
             ),
           ),
           
+          Positioned(
+            top: 10,
+            right: 10,
+            child: SafeArea(
+              child: ValueListenableBuilder<ThemeMode>(
+                valueListenable: themeModeNotifier,
+                builder: (context, mode, _) {
+                  final isThemeDark = mode == ThemeMode.dark || (mode == ThemeMode.system && isDark);
+                  return IconButton(
+                    icon: Icon(
+                      isThemeDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                      color: isThemeDark ? Colors.white : AppColors.textPrimary,
+                      size: 28,
+                    ),
+                    onPressed: () {
+                      themeModeNotifier.value = isThemeDark ? ThemeMode.light : ThemeMode.dark;
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+          
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
@@ -106,10 +130,39 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                             ),
                             boxShadow: isDark ? [] : AppColors.cardShadow,
                           ),
-                          child: const Icon(
-                            Icons.payments_rounded, // fallback icon resembling orbits / anti-gravity fintech logo
-                            color: AppColors.primary,
-                            size: 64,
+                          child: SizedBox(
+                            width: 80,
+                            height: 80,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Icon(
+                                  Icons.school_rounded,
+                                  color: AppColors.primary.withOpacity(0.18),
+                                  size: 72,
+                                ),
+                                Transform.translate(
+                                  offset: const Offset(14, 14),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                                        width: 2.5,
+                                      ),
+                                      boxShadow: isDark ? [] : AppColors.cardShadow,
+                                    ),
+                                    child: const Icon(
+                                      Icons.credit_card_rounded,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         const SizedBox(height: 24),

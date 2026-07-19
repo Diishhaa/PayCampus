@@ -61,7 +61,7 @@ class _UploadProofScreenState extends State<UploadProofScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                "Upload transaction invoice, bank challan slip, or mobile screenshot. Our AI engine will extract information instantly for school auditing.",
+                "Upload transaction invoice, bank challan slip, or mobile screenshot. Our smart scanner will extract information instantly for school auditing.",
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: isDark ? const Color(0xFF94A3B8) : AppColors.textSecondary,
                   height: 1.5,
@@ -208,9 +208,9 @@ class _UploadProofScreenState extends State<UploadProofScreen> {
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Analyze Receipt with AI"),
+                      Text("Smart Scan Receipt"),
                       SizedBox(width: 8),
-                      Icon(Icons.auto_awesome, size: 18),
+                      Icon(Icons.qr_code_scanner_rounded, size: 18),
                     ],
                   ),
                 ),
